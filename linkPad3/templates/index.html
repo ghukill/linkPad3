@@ -1,0 +1,7 @@
+<!-- here be the head -->
+
+<ul>
+	{% for doc in search_results.documents %}
+		<li>{{doc.linkTitle}}</li>
+	{% endfor %}
+</ul>
