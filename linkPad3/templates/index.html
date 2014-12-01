@@ -1,7 +1,49 @@
 <!-- here be the head -->
+<html>
+<head>
+	<title>linkPad3</title>
+	<link rel="stylesheet" type="text/css" href="/static/css/main.css">
+</head>
 
-<ul>
-	{% for doc in search_results.documents %}
-		<li>{{doc.linkTitle}}</li>
-	{% endfor %}
-</ul>
+<body>
+
+	<div id="title">
+		<h1><a href="./">linkPad3</a></h1>
+	</div>
+
+	<div id="search_form">
+		<form action="./" method="GET">
+			<input type="text" name="q" placeholder="search the treasures"></input>
+		</form>
+	</div>
+
+	<div id="links">
+		{% if search_results %}
+			<ul>
+				{% for doc in search_results.documents %}
+					<li><img src="http://www.google.com/s2/favicons?domain={{doc.linkURL}}"/> {{doc.linkTitle}}<br>
+						<a href="{{doc.linkURL}}">{{doc.linkURL}}</a>
+					</li>
+				{% endfor %}
+			</ul>
+		{% else %}
+			<p>{{message}}</p>
+		{% endif %}
+	</div>
+
+	<!-- favicons ONLY -->
+	<!-- <div id="links">
+		{% if search_results %}
+			{% for doc in search_results.documents %}				
+				<a href="{{doc.linkURL}}"><img src="http://www.google.com/s2/favicons?domain={{doc.linkURL}}"/></a>
+			{% endfor %}
+		{% else %}
+			<p>{{message}}</p>
+		{% endif %}
+	</div> -->
+
+	<div id="pagination">
+		<p>Pagination here...</p>
+	</div>
+
+</body>
