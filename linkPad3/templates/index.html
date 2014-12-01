@@ -1,15 +1,26 @@
-<!-- here be the head -->
 <html>
 <head>
-	<title>linkPad3</title>
+	<title>linkPad3 - main</title>
 	<link rel="stylesheet" type="text/css" href="/static/css/main.css">
 </head>
 
 <body>
+	<div id="logo">
+		<a href="./">
+		<pre>
+██╗     ██╗███╗   ██╗██╗  ██╗██████╗  █████╗ ██████╗      ██████╗ 
+██║     ██║████╗  ██║██║ ██╔╝██╔══██╗██╔══██╗██╔══██╗     ╚════██╗
+██║     ██║██╔██╗ ██║█████╔╝ ██████╔╝███████║██║  ██║█████╗█████╔╝
+██║     ██║██║╚██╗██║██╔═██╗ ██╔═══╝ ██╔══██║██║  ██║╚════╝╚═══██╗
+███████╗██║██║ ╚████║██║  ██╗██║     ██║  ██║██████╔╝     ██████╔╝
+╚══════╝╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝╚═╝     ╚═╝  ╚═╝╚═════╝      ╚═════╝ 
+		</pre>		
+		</a>
+	</div>                                                                  
 
-	<div id="title">
+	<!-- <div id="title">
 		<h1><a href="./">linkPad3</a></h1>
-	</div>
+	</div> -->
 
 	<div id="search_form">
 		<form action="./" method="GET">
@@ -21,7 +32,9 @@
 		{% if search_results %}
 			<ul>
 				{% for doc in search_results.documents %}
-					<li><img src="http://www.google.com/s2/favicons?domain={{doc.linkURL}}"/> {{doc.linkTitle}}<br>
+					<li><img src="http://www.google.com/s2/favicons?domain={{doc.linkURL}}"/> {{doc.linkTitle}}
+						<a class="editLink" href="/edit?id={{doc.id}}">(edit)</a>
+						<br>
 						<a href="{{doc.linkURL}}">{{doc.linkURL}}</a>
 					</li>
 				{% endfor %}
@@ -44,6 +57,10 @@
 
 	<div id="pagination">
 		<p>Pagination here...</p>
+	</div>
+
+	<div id="bookmarklet">
+		<a href='javascript:(function(){dest="http://162.243.93.130:4444/add?url="+encodeURIComponent(location.href); window.open(dest,"_tab");})();'>linkPad3-Add</a>
 	</div>
 
 </body>

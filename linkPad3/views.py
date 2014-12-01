@@ -27,6 +27,7 @@ from bs4 import BeautifulSoup
 import urllib2
 import datetime
 import md5
+import requests
 
 # flask proper
 from flask import render_template, request, session, redirect, make_response, Response, Blueprint
@@ -79,25 +80,45 @@ def add():
 	else:
 		return redirect("./")
 
-	# get page title
-	soup = BeautifulSoup(urllib2.urlopen(add_url))
-	page_title = soup.title.string	
+	linkAdd.delay(add_url)
 
-	# set date (do we need?)
-	# current_date = datetime.datetime.now().isoformat() + "Z"
-	
-	# index in Solr
-	documents = [{		
-		"id": md5.new(add_url).hexdigest(),
-		"linkTitle":page_title,
-		"linkURL":add_url,
-		"last_modified":"NOW"
-	}]
-	update_response = solr_handle.update(documents, commit=True)
-	print update_response.raw_content
-	solr_handle.commit()
+	return "Document being added!"
 
-	return "Document added!"
+
+@celery.task(name="linkAdd")
+def linkAdd(add_url):
+
+	try:
+		# get page title
+		soup = BeautifulSoup(urllib2.urlopen(add_url))
+		page_title = soup.title.string
+
+		# grab full-text HTML to index in int_fullText	
+		page_html = requests.get("http://localhost:8050/render.html?url={add_url}&wait=1".format(add_url=add_url)).content		
+		
+		# index in Solr
+		documents = [{		
+			"id": md5.new(add_url).hexdigest(),
+			"linkTitle":page_title,
+			"linkURL":add_url,
+			"last_modified":"NOW",
+			"int_fullText":page_html
+		}]
+		update_response = solr_handle.update(documents, commit=True)
+		
+		print update_response.raw_content	
+		solr_handle.commit()
+	except:
+		"Could not render page."
+
+
+
+@app.route("/edit", methods=['GET', 'POST'])
+def edit():
+	'''
+	Retrieve solr document, render to page, edit, update.
+	'''
+
 
 
 
