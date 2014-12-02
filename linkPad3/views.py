@@ -109,8 +109,7 @@ def linkAdd(add_url):
 
 		# grab full-text HTML to index in int_fullText	
 		try:
-			page_html = requests.get("http://localhost:8050/render.html?url={add_url}&wait=1".format(add_url=add_url)).content
-			link.doc['int_fullText'] = page_html
+			link.indexHTML()
 			link.update()
 		except:
 			print "Could not render page, skipping full HTML"		

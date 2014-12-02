@@ -1,4 +1,5 @@
 from math import ceil
+import requests
 
 # Solr
 from solrHandles import solr_handle
@@ -73,7 +74,8 @@ class Link(object):
 		return delete_response
 
 	def indexHTML(self):
-		pass
+		page_html = requests.get("http://localhost:8050/render.html?url={add_url}&wait=1".format(add_url=self.doc['linkURL'])).content
+		self.doc['int_fullText'] = page_html
 
 	def getThumb(self):
 		pass
