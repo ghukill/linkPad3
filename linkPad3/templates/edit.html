@@ -6,17 +6,36 @@
 
 
 <body>
-    <h2><a href="/">linkPad3</a></h2>
-    
-        <p>You have selected link <em>2661201562765ba798fd5baad3c83c93</em> to edit.</p>                
+    <div id="logo">
+        <a href="./">
+        <pre>
+██╗     ██╗███╗   ██╗██╗  ██╗██████╗  █████╗ ██████╗      ██████╗ 
+██║     ██║████╗  ██║██║ ██╔╝██╔══██╗██╔══██╗██╔══██╗     ╚════██╗
+██║     ██║██╔██╗ ██║█████╔╝ ██████╔╝███████║██║  ██║█████╗█████╔╝
+██║     ██║██║╚██╗██║██╔═██╗ ██╔═══╝ ██╔══██║██║  ██║╚════╝╚═══██╗
+███████╗██║██║ ╚████║██║  ██╗██║     ██║  ██║██████╔╝     ██████╔╝
+╚══════╝╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝╚═╝     ╚═╝  ╚═╝╚═════╝      ╚═════╝ 
+        </pre>      
+        </a>
+    </div>  
 
+    <div>
+        <p>You have selected, <em>"{{doc.linkTitle}}"</em>, <em>{{doc.id}}</em></p>
+    </div>
+
+    <div id="edit">
         <form action="/edit" method="POST">
             <label><strong>link title:</strong></label>
-            <input size="120" type="text" name="linkTitle" value="solrCores/schema.xml at master · WSULib/solrCores · GitHub"><br>
+            <input size="120" type="text" name="linkTitle" value="{{doc.linkTitle}}"><br>
             <label><strong>link URL:</strong></label>
-            <input size="120" type="text" name="linkURL" value="https://github.com/WSULib/solrCores/blob/master/search/conf/schema.xml"><br>
-            <input type="hidden" name="id" value="2661201562765ba798fd5baad3c83c93">
+            <input size="120" type="text" name="linkURL" value="{{doc.linkURL}}"><br>
+            <input type="hidden" name="id" value="{{doc.id}}">
             <button type="submit">submit</button>
-        </form>         
+        </form>
+    </div>      
+
+    <div id="delete">
+        <a href="/delete?id={{doc.id}}">delete!?</a>
+    </div>
 
 </body>

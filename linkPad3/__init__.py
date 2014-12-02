@@ -2,9 +2,8 @@
 
 # modules / packages import
 from flask import Flask, render_template, g
-from flask.ext.sqlalchemy import SQLAlchemy
-from sqlalchemy import create_engine, MetaData
-from flask.ext.login import LoginManager
+
+from solrHandles import solr_handle
 
 # create app
 app = Flask(__name__)

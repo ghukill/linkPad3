@@ -1,5 +1,8 @@
 from math import ceil
 
+# Solr
+from solrHandles import solr_handle
+
 class Pagination(object):
 
 	def __init__(self, page, per_page, total_count):
@@ -35,3 +38,42 @@ class Pagination(object):
 				last = num
 
 
+# model for handling individual links in LinkPad3
+class Link(object):	
+
+	def __init__(self):		
+		self.id = False
+		self.doc = {		
+			"id": False,
+			"linkTitle":False,
+			"linkURL":False,
+			"last_modified":"NOW",
+			"int_fullText":False
+		}
+		
+
+	def getLink(self,doc_id):
+		self.id = doc_id
+
+		solr_params = {
+			"q":"id:{doc_id}".format(doc_id=doc_id),
+			"start":0,
+			"rows":1
+		}
+		search_results = solr_handle.search(**solr_params)
+		doc = search_results.documents[0]
+		self.doc = doc
+
+	def update(self):
+		update_respone = solr_handle.update([self.doc], commit=True)		
+		return update_respone
+
+	def delete(self):
+		delete_response = solr_handle.delete_by_key(self.id, commit=True)
+		return delete_response
+
+	def indexHTML(self):
+		pass
+
+	def getThumb(self):
+		pass

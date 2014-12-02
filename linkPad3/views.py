@@ -82,34 +82,43 @@ def add():
 
 	linkAdd.delay(add_url)
 
-	return "Document being added!"
+	# future solr id
+	doc_id = md5.new(add_url).hexdigest()
+
+	return render_template("add.html",add_url=add_url,doc_id=doc_id)
 
 
 @celery.task(name="linkAdd")
 def linkAdd(add_url):
-
+	
 	try:
 		# get page title
 		soup = BeautifulSoup(urllib2.urlopen(add_url))
 		page_title = soup.title.string
 
-		# grab full-text HTML to index in int_fullText	
-		page_html = requests.get("http://localhost:8050/render.html?url={add_url}&wait=1".format(add_url=add_url)).content		
-		
 		# index in Solr
-		documents = [{		
+		link = models.Link()
+		link.doc = {		
 			"id": md5.new(add_url).hexdigest(),
 			"linkTitle":page_title,
 			"linkURL":add_url,
 			"last_modified":"NOW",
-			"int_fullText":page_html
-		}]
-		update_response = solr_handle.update(documents, commit=True)
+			"int_fullText":False
+		}
+		update_response = link.update()
+
+		# grab full-text HTML to index in int_fullText	
+		try:
+			page_html = requests.get("http://localhost:8050/render.html?url={add_url}&wait=1".format(add_url=add_url)).content
+			link.doc['int_fullText'] = page_html
+			link.update()
+		except:
+			print "Could not render page, skipping full HTML"		
 		
 		print update_response.raw_content	
-		solr_handle.commit()
+		
 	except:
-		"Could not render page."
+		"Could not index link."
 
 
 
@@ -118,6 +127,47 @@ def edit():
 	'''
 	Retrieve solr document, render to page, edit, update.
 	'''
+
+	# prepare to edit
+	if request.method == "GET":
+		doc_id = request.args.get('id')		
+		link = models.Link()
+		link.getLink(doc_id)
+
+		return render_template("edit.html",doc=link.doc)
+
+	# commit changes
+	if request.method == "POST":
+		doc_id = request.form['id']		
+		link = models.Link()
+		link.getLink(doc_id)
+
+		link.doc['linkTitle'] = request.form['linkTitle']
+		link.doc['linkURL'] = request.form['linkURL']
+		update_response = link.update()		
+
+		return str(update_response.raw_content)
+
+
+
+	return "Not a normal pattern, try again."
+
+
+
+@app.route("/delete", methods=['GET', 'POST'])
+def delete():
+	'''
+	Remove link from Solr
+	'''
+
+	doc_id = request.args.get('id')		
+	link = models.Link()
+	link.getLink(doc_id)
+	delete_response = link.delete()
+	print delete_response.raw_content
+
+	return redirect('./')
+
 
 
 
