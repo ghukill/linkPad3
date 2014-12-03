@@ -67,7 +67,7 @@ def index():
 
 	# failed search
 	if search_handle.results.total_results == 0:
-		return render_template("index.html",message="Sorry pardner, none found.")		
+		return render_template("index.html",search_handle=search_handle,message="Sorry pardner, none found.")		
 
 	# successful search
 	else:

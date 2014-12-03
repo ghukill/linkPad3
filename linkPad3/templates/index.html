@@ -19,50 +19,54 @@
 			</a>
 		</div>                                                                  
 
-		<!-- <div id="title">
-			<h1><a href="./">linkPad3</a></h1>
-		</div> -->
-
 		<div id="search_form">
 			<form action="./" method="GET">
-				<input type="text" name="q" placeholder="search the treasures"></input>
+				<input type="text" name="q" placeholder="search the treasures" value="{% if search_handle.q != '*:*'%}{{search_handle.q}}{% endif %}\"></input>
 				<span>{{search_handle.total_record_count}} records, {{search_handle.results.total_results}} search </span>
 			</form>
 		</div>
 
-		<div id="links">
-			{% if search_handle.results %}
-				<ul>
-					{% for doc in search_handle.results.documents %}
-						<li><img src="http://www.google.com/s2/favicons?domain={{doc.linkURL}}"/> {{doc.linkTitle}}
-							<a class="editLink" href="/edit?id={{doc.id}}">(edit)</a>
-							<br>
-							<a href="{{doc.linkURL}}">{{doc.linkURL}}</a>
-						</li>
-					{% endfor %}
-				</ul>
-			{% else %}
-				<p>{{message}}</p>
-			{% endif %}
-		</div>
+		{% if search_handle.results.total_results > 0 %}
 
-		<div id="pagination">
-			<ul>
-				{% if pagination.has_prev %}
-					<li><a href="/?q={{search_handle.q}}&page={{pagination.page - 1}}">previous</a></li>
+			<div id="links">
+				{% if search_handle.results %}
+					<ul>
+						{% for doc in search_handle.results.documents %}
+							<li><img src="http://www.google.com/s2/favicons?domain={{doc.linkURL}}"/> {{doc.linkTitle}}
+								<a class="editLink" href="/edit?id={{doc.id}}">(edit)</a>
+								<br>
+								<a href="{{doc.linkURL}}">{{doc.linkURL}}</a>
+							</li>
+						{% endfor %}
+					</ul>
 				{% else %}
-					<li><span style="color:gray;">nada</span></li>
+					<p>{{message}}</p>
 				{% endif %}
-				<li>--</li>
-				<li>{{pagination.page}} / {{pagination.pages}}</li>				
-				<li>--</li>
-				{% if pagination.has_next %}
-					<li><a href="/?q={{search_handle.q}}&page={{pagination.page + 1}}">next</a></li>
-				{% else %}
-					<li><span style="color:gray;">nada</span></li>
-				{% endif %}
-			</ul>
-		</div>
+			</div>
+
+			<div id="pagination">
+				<ul>
+					{% if pagination.has_prev %}
+						<li><a href="/?q={{search_handle.q}}&page={{pagination.page - 1}}">previous</a></li>
+					{% else %}
+						<li><span style="color:gray;">nada</span></li>
+					{% endif %}
+					<li>--</li>
+					<li>{{pagination.page}} / {{pagination.pages}}</li>				
+					<li>--</li>
+					{% if pagination.has_next %}
+						<li><a href="/?q={{search_handle.q}}&page={{pagination.page + 1}}">next</a></li>
+					{% else %}
+						<li><span style="color:gray;">nada</span></li>
+					{% endif %}
+				</ul>
+			</div>
+
+		{% else %}
+
+			<p>{{message}}</p>
+
+		{% endif %}
 
 		<div id="bookmarklet">
 			<a href='javascript:(function(){dest="http://162.243.93.130:4444/add?url="+encodeURIComponent(location.href); window.open(dest,"_tab");})();'>linkPad3-Add</a>
