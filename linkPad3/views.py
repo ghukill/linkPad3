@@ -40,12 +40,6 @@ app.secret_key = 'linkPad3'
 
 @app.route("/", methods=['GET', 'POST'])
 def index():
-	
-	'''
-	- don't sort on search by defaults
-	- allow for different sorts
-	- include pagination pages, numbers
-	'''
 
 	# instantiate Search object
 	search_handle = models.Search()
@@ -63,21 +57,21 @@ def index():
 		search_handle.sort = "last_modified asc"
 
 	# get current page
-	if request.method == "GET" and request.args.get('page') != "":
-		current_page = request.args.get('page')
+	if request.args.get('page') != "" and request.args.get('page') != None:
+		search_handle.page = int(request.args.get('page'))
 	else:
-		current_page = "1"
+		search_handle.page = 1
 
 	# perform search
 	search_handle.results = search_handle.search()
 
 	# failed search
 	if search_handle.results.total_results == 0:
-		return render_template("index.html",message="Sorry bud, nothing to report.")		
+		return render_template("index.html",message="Sorry pardner, none found.")		
 
 	# successful search
 	else:
-		pagination = models.Pagination(current_page, localConfig.rows, search_handle.results.total_results)
+		pagination = models.Pagination(page=search_handle.page, rows=localConfig.rows, total_results=search_handle.results.total_results)
 		return render_template("index.html",pagination=pagination,search_handle=search_handle)
 
 

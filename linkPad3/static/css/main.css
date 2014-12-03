@@ -1,6 +1,14 @@
 
+#bookmarklet{
+	font-size:25%;
+}
+
 #container{
 	margin:10px;	
+}
+
+#links ul {
+	list-style-type: none;
 }
 
 #links ul li{

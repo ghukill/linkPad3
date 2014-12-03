@@ -26,6 +26,7 @@
 		<div id="search_form">
 			<form action="./" method="GET">
 				<input type="text" name="q" placeholder="search the treasures"></input>
+				<span>{{search_handle.total_record_count}} records, {{search_handle.results.total_results}} search </span>
 			</form>
 		</div>
 
@@ -47,11 +48,19 @@
 
 		<div id="pagination">
 			<ul>
-				<li>thing</li>
-				<li>here</li>
-				<li></li>
-				<li></li>
-				<li></li>
+				{% if pagination.has_prev %}
+					<li><a href="/?q={{search_handle.q}}&page={{pagination.page - 1}}">previous</a></li>
+				{% else %}
+					<li><span style="color:gray;">nada</span></li>
+				{% endif %}
+				<li>--</li>
+				<li>{{pagination.page}} / {{pagination.pages}}</li>				
+				<li>--</li>
+				{% if pagination.has_next %}
+					<li><a href="/?q={{search_handle.q}}&page={{pagination.page + 1}}">next</a></li>
+				{% else %}
+					<li><span style="color:gray;">nada</span></li>
+				{% endif %}
 			</ul>
 		</div>
 
