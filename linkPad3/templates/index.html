@@ -5,62 +5,59 @@
 </head>
 
 <body>
-	<div id="logo">
-		<a href="./">
-		<pre>
+	<div id="container">
+		<div id="logo">
+			<a href="./">
+			<pre>
 ██╗     ██╗███╗   ██╗██╗  ██╗██████╗  █████╗ ██████╗      ██████╗ 
 ██║     ██║████╗  ██║██║ ██╔╝██╔══██╗██╔══██╗██╔══██╗     ╚════██╗
 ██║     ██║██╔██╗ ██║█████╔╝ ██████╔╝███████║██║  ██║█████╗█████╔╝
 ██║     ██║██║╚██╗██║██╔═██╗ ██╔═══╝ ██╔══██║██║  ██║╚════╝╚═══██╗
 ███████╗██║██║ ╚████║██║  ██╗██║     ██║  ██║██████╔╝     ██████╔╝
 ╚══════╝╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝╚═╝     ╚═╝  ╚═╝╚═════╝      ╚═════╝ 
-		</pre>		
-		</a>
-	</div>                                                                  
+			</pre>		
+			</a>
+		</div>                                                                  
 
-	<!-- <div id="title">
-		<h1><a href="./">linkPad3</a></h1>
-	</div> -->
+		<!-- <div id="title">
+			<h1><a href="./">linkPad3</a></h1>
+		</div> -->
 
-	<div id="search_form">
-		<form action="./" method="GET">
-			<input type="text" name="q" placeholder="search the treasures"></input>
-		</form>
-	</div>
+		<div id="search_form">
+			<form action="./" method="GET">
+				<input type="text" name="q" placeholder="search the treasures"></input>
+			</form>
+		</div>
 
-	<div id="links">
-		{% if search_results %}
+		<div id="links">
+			{% if search_handle.results %}
+				<ul>
+					{% for doc in search_handle.results.documents %}
+						<li><img src="http://www.google.com/s2/favicons?domain={{doc.linkURL}}"/> {{doc.linkTitle}}
+							<a class="editLink" href="/edit?id={{doc.id}}">(edit)</a>
+							<br>
+							<a href="{{doc.linkURL}}">{{doc.linkURL}}</a>
+						</li>
+					{% endfor %}
+				</ul>
+			{% else %}
+				<p>{{message}}</p>
+			{% endif %}
+		</div>
+
+		<div id="pagination">
 			<ul>
-				{% for doc in search_results.documents %}
-					<li><img src="http://www.google.com/s2/favicons?domain={{doc.linkURL}}"/> {{doc.linkTitle}}
-						<a class="editLink" href="/edit?id={{doc.id}}">(edit)</a>
-						<br>
-						<a href="{{doc.linkURL}}">{{doc.linkURL}}</a>
-					</li>
-				{% endfor %}
+				<li>thing</li>
+				<li>here</li>
+				<li></li>
+				<li></li>
+				<li></li>
 			</ul>
-		{% else %}
-			<p>{{message}}</p>
-		{% endif %}
+		</div>
+
+		<div id="bookmarklet">
+			<a href='javascript:(function(){dest="http://162.243.93.130:4444/add?url="+encodeURIComponent(location.href); window.open(dest,"_tab");})();'>linkPad3-Add</a>
+		</div>
+
 	</div>
-
-	<!-- favicons ONLY -->
-	<!-- <div id="links">
-		{% if search_results %}
-			{% for doc in search_results.documents %}				
-				<a href="{{doc.linkURL}}"><img src="http://www.google.com/s2/favicons?domain={{doc.linkURL}}"/></a>
-			{% endfor %}
-		{% else %}
-			<p>{{message}}</p>
-		{% endif %}
-	</div> -->
-
-	<div id="pagination">
-		<p>Pagination here...</p>
-	</div>
-
-	<div id="bookmarklet">
-		<a href='javascript:(function(){dest="http://162.243.93.130:4444/add?url="+encodeURIComponent(location.href); window.open(dest,"_tab");})();'>linkPad3-Add</a>
-	</div>
-
 </body>

@@ -4,16 +4,19 @@ import requests
 # Solr
 from solrHandles import solr_handle
 
+# linkPad3 modules
+import localConfig
+
 class Pagination(object):
 
-	def __init__(self, page, per_page, total_count):
+	def __init__(self, page, rows, total_results):
 		self.page = page
-		self.per_page = per_page
-		self.total_count = total_count
+		self.rows = rows
+		self.total_results = total_results
 
 	@property
 	def pages(self):
-		return int(ceil(self.total_count / float(self.per_page)))
+		return int(ceil(self.total_results / float(self.rows)))
 
 	@property
 	def has_prev(self):
@@ -79,3 +82,41 @@ class Link(object):
 
 	def getThumb(self):
 		pass
+
+
+# Search Class
+class Search(object):
+
+	def __init__(self,q="*:*", sort="last_modified desc", rows=localConfig.rows, page=1):
+
+		self.q = q
+		self.sort = sort
+		self.rows = rows
+		self.page = page		
+
+
+	@property
+	def start(self):
+		if self.page > 1:
+			start = self.rows * (self.page - 1)
+		else:
+			start = 0
+		return start
+
+
+	@property
+	def total_record_count(self):
+		# get total record count from Solr DB
+		return solr_handle.search(q="*:*",rows=0).total_results
+
+
+	def search(self):
+		solr_params = {
+			"q":self.q,
+			"rows":self.rows,
+			"start":self.start,
+			"sort":self.sort
+		}
+		return solr_handle.search(**solr_params)
+
+

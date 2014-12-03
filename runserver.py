@@ -18,7 +18,7 @@ import localConfig
 from linkPad3 import app
 
 # twisted liseners
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.ERROR)
 
 # linkPad3
 resource = WSGIResource(reactor, reactor.getThreadPool(), app)

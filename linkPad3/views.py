@@ -40,12 +40,27 @@ app.secret_key = 'linkPad3'
 
 @app.route("/", methods=['GET', 'POST'])
 def index():
+	
+	'''
+	- don't sort on search by defaults
+	- allow for different sorts
+	- include pagination pages, numbers
+	'''
 
-	# get query string
+	# instantiate Search object
+	search_handle = models.Search()
+
+	# detect if search
 	if request.args.get('q') != "" and request.args.get('q') != None:
-		q = request.args.get('q')
+		search_handle.q = request.args.get('q')
 	else:
-		q = "*:*"
+		search_handle.q = "*:*"
+
+	# choose sort type
+	if request.args.get('sort') != "" and request.args.get('sort') != None:
+		search_handle.sort = request.args.get('sort')
+	else:
+		search_handle.sort = "last_modified asc"
 
 	# get current page
 	if request.method == "GET" and request.args.get('page') != "":
@@ -53,22 +68,17 @@ def index():
 	else:
 		current_page = "1"
 
-	solr_params = {
-		"q":q,
-		"start":0,
-		"rows":localConfig.per_page,
-		"sort":"last_modified desc"
-	}
-	search_results = solr_handle.search(**solr_params)
+	# perform search
+	search_handle.results = search_handle.search()
 
 	# failed search
-	if search_results.total_results == 0:
+	if search_handle.results.total_results == 0:
 		return render_template("index.html",message="Sorry bud, nothing to report.")		
 
 	# successful search
 	else:
-		pagination = models.Pagination(current_page, localConfig.per_page, search_results.total_results)
-		return render_template("index.html",pagination=pagination,search_results=search_results)
+		pagination = models.Pagination(current_page, localConfig.rows, search_handle.results.total_results)
+		return render_template("index.html",pagination=pagination,search_handle=search_handle)
 
 
 @app.route("/add", methods=['GET', 'POST'])
@@ -147,9 +157,7 @@ def edit():
 
 		return str(update_response.raw_content)
 
-
-
-	return "Not a normal pattern, try again."
+	return redirect('./')
 
 
 
@@ -163,8 +171,7 @@ def delete():
 	link = models.Link()
 	link.getLink(doc_id)
 	delete_response = link.delete()
-	print delete_response.raw_content
-
+	print "link deleted."
 	return redirect('./')
 
 
