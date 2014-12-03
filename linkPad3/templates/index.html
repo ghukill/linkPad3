@@ -21,7 +21,7 @@
 
 		<div id="search_form">
 			<form action="./" method="GET">
-				<input type="text" name="q" placeholder="search the treasures" value="{% if search_handle.q != '*:*'%}{{search_handle.q}}{% endif %}\"></input>
+				<input type="text" name="q" placeholder="search the treasures" value="{% if search_handle.q != '*:*'%}{{search_handle.q}}{% endif %}"></input>
 				<span>{{search_handle.total_record_count}} records, {{search_handle.results.total_results}} search </span>
 			</form>
 		</div>
