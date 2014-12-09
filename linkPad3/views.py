@@ -42,19 +42,19 @@ app.secret_key = 'linkPad3'
 def index():
 
 	# instantiate Search object
-	search_handle = models.Search()
+	search_handle = models.Search()	
 
 	# detect if search
 	if request.args.get('q') != "" and request.args.get('q') != None:
 		search_handle.q = request.args.get('q')
+		search_handle.sort = ""
 	else:
 		search_handle.q = "*:*"
+		search_handle.sort = "last_modified desc"
 
 	# choose sort type
 	if request.args.get('sort') != "" and request.args.get('sort') != None:
-		search_handle.sort = request.args.get('sort')
-	else:
-		search_handle.sort = "last_modified asc"
+		search_handle.sort = request.args.get('sort')	
 
 	# get current page
 	if request.args.get('page') != "" and request.args.get('page') != None:
@@ -149,9 +149,7 @@ def edit():
 		link.doc['linkURL'] = request.form['linkURL']
 		update_response = link.update()		
 
-		return str(update_response.raw_content)
-
-	return redirect('./')
+		return redirect('./')
 
 
 
