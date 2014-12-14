@@ -1,18 +1,20 @@
 
-#bookmarklet{
-	font-size:25%;
+body {
+	font-family: "Times New Roman", Times, serif;
+	line-height:1;
 }
 
-#container{
-	margin:10px;	
+#bookmarklet .button {
+	height:22px;
+	line-height:20px;
 }
+
+/*#container{
+	margin:10px;	
+}*/
 
 #links ul {
 	list-style-type: none;
-}
-
-#links ul li{
-	margin-bottom:10px;
 }
 
 .editLink {
@@ -24,7 +26,7 @@
 #logo a {
 	text-decoration:none;
 	color:black;
-	font-size:50%;
+	font-size:.65rem;
 }
 
 #pagination ul {
@@ -33,4 +35,18 @@
 
 #pagination ul li {
 	display:inline;
+}
+
+.tight {
+	margin-bottom:0rem;
+}
+
+/* Skeleton Utilities */
+/* Float either direction */
+.u-pull-right {
+  float: right; 
+}
+
+.u-pull-left {
+  float: left; 
 }

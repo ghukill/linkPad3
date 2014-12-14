@@ -1,75 +1,115 @@
 <html>
 <head>
 	<title>linkPad3 - main</title>
+
+	<!-- Mobile Specific Metas
+	–––––––––––––––––––––––––––––––––––––––––––––––––– -->
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+	<!-- FONT
+	–––––––––––––––––––––––––––––––––––––––––––––––––– -->
+	<link href='http://fonts.googleapis.com/css?family=Raleway:400,300,600' rel='stylesheet' type='text/css'>
+
+	<!-- CSS
+	–––––––––––––––––––––––––––––––––––––––––––––––––– -->
+	<link rel="stylesheet" href="/static/skeleton/css/normalize.css">
+	<link rel="stylesheet" href="/static/skeleton/css/skeleton.css">
+
 	<link rel="stylesheet" type="text/css" href="/static/css/main.css">
+
+
 </head>
 
 <body>
-	<div id="container">
-		<div id="logo">
-			<a href="./">
-			<pre>
+	<div id="container" class="container">
+
+		<div class="row tight">
+			<div class="twelve columns">
+				<div id="logo">
+					<a href="./">
+					<pre class="tight">
 ██╗     ██╗███╗   ██╗██╗  ██╗██████╗  █████╗ ██████╗      ██████╗ 
 ██║     ██║████╗  ██║██║ ██╔╝██╔══██╗██╔══██╗██╔══██╗     ╚════██╗
 ██║     ██║██╔██╗ ██║█████╔╝ ██████╔╝███████║██║  ██║█████╗█████╔╝
 ██║     ██║██║╚██╗██║██╔═██╗ ██╔═══╝ ██╔══██║██║  ██║╚════╝╚═══██╗
 ███████╗██║██║ ╚████║██║  ██╗██║     ██║  ██║██████╔╝     ██████╔╝
 ╚══════╝╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝╚═╝     ╚═╝  ╚═╝╚═════╝      ╚═════╝ 
-			</pre>		
-			</a>
-		</div>                                                                  
-
-		<div id="search_form">
-			<form action="./" method="GET">
-				<input type="text" name="q" placeholder="search the treasures" value="{% if search_handle.q != '*:*'%}{{search_handle.q}}{% endif %}"></input>
-				<span>{{search_handle.total_record_count}} records, {{search_handle.results.total_results}} search </span>
-			</form>
+					</pre>		
+					</a>
+					<p id="numbers" >{{search_handle.results.total_results}} current query / {{search_handle.total_record_count}} total</p>
+				</div>
+			</div>
 		</div>
 
-		{% if search_handle.results.total_results > 0 %}
+		<div class="row tight">
+			<div class="twelve columns">
+				
+				<div id="search_form" class="twelve columns">
+					<form action="./" method="GET">
+						<div class="five columns">
+							<input class="u-pull-left u-full-width" type="text" name="q" placeholder="search the treasures" value="{% if search_handle.q != '*:*'%}{{search_handle.q}}{% endif %}"></input>
+						</div>						
+						<div class="two columns">
+							<input class="button u-pull-left" type="submit" value="query">
+						</div>
+						
+					</form>
+				</div>
+			</div>
+		</div>
 
-			<div id="links">
-				{% if search_handle.results %}
+		<div class="row tight">
+			<div class="twelve columns">
+			{% if search_handle.results.total_results > 0 %}
+
+				<div id="links">
+					{% if search_handle.results %}
+						<ul>
+							{% for doc in search_handle.results.documents %}
+								<li><img src="http://www.google.com/s2/favicons?domain={{doc.linkURL}}"/> {{doc.linkTitle}}
+									<a class="editLink" href="/edit?id={{doc.id}}">(edit)</a>
+									<br>
+									<a href="{{doc.linkURL}}">{{doc.linkURL}}</a>
+								</li>
+							{% endfor %}
+						</ul>
+					{% else %}
+						<p>{{message}}</p>
+					{% endif %}
+				</div>
+
+				<div id="pagination">
 					<ul>
-						{% for doc in search_handle.results.documents %}
-							<li><img src="http://www.google.com/s2/favicons?domain={{doc.linkURL}}"/> {{doc.linkTitle}}
-								<a class="editLink" href="/edit?id={{doc.id}}">(edit)</a>
-								<br>
-								<a href="{{doc.linkURL}}">{{doc.linkURL}}</a>
-							</li>
-						{% endfor %}
+						{% if pagination.has_prev %}
+							<li><a href="/?q={{search_handle.q}}&page={{pagination.page - 1}}">previous</a></li>
+						{% else %}
+							<li><span style="color:gray;">nada</span></li>
+						{% endif %}
+						<li>--</li>
+						<li>{{pagination.page}} / {{pagination.pages}}</li>				
+						<li>--</li>
+						{% if pagination.has_next %}
+							<li><a href="/?q={{search_handle.q}}&page={{pagination.page + 1}}">next</a></li>
+						{% else %}
+							<li><span style="color:gray;">nada</span></li>
+						{% endif %}
 					</ul>
-				{% else %}
-					<p>{{message}}</p>
-				{% endif %}
+				</div>
+
+			{% else %}
+
+				<p>{{message}}</p>
+
+			{% endif %}
 			</div>
+		</div>
 
-			<div id="pagination">
-				<ul>
-					{% if pagination.has_prev %}
-						<li><a href="/?q={{search_handle.q}}&page={{pagination.page - 1}}">previous</a></li>
-					{% else %}
-						<li><span style="color:gray;">nada</span></li>
-					{% endif %}
-					<li>--</li>
-					<li>{{pagination.page}} / {{pagination.pages}}</li>				
-					<li>--</li>
-					{% if pagination.has_next %}
-						<li><a href="/?q={{search_handle.q}}&page={{pagination.page + 1}}">next</a></li>
-					{% else %}
-						<li><span style="color:gray;">nada</span></li>
-					{% endif %}
-				</ul>
+		<div class="row tight">
+			<div class="twelve columns">
+				<div id="bookmarklet">
+					<p>bookmarklet: <a class="button" href='javascript:(function(){dest="http://162.243.93.130:4444/add?url="+encodeURIComponent(location.href); window.open(dest,"_tab");})();'>linkPad3-Add</a></p>
+				</div>
 			</div>
-
-		{% else %}
-
-			<p>{{message}}</p>
-
-		{% endif %}
-
-		<div id="bookmarklet">
-			<a href='javascript:(function(){dest="http://162.243.93.130:4444/add?url="+encodeURIComponent(location.href); window.open(dest,"_tab");})();'>linkPad3-Add</a>
 		</div>
 
 	</div>
