@@ -1,41 +1,69 @@
 <html>
 <head>
-	<title>linkPad3 - edit</title>
-	<link rel="stylesheet" type="text/css" href="/static/css/main.css">
+    <title>linkPad3 - edit</title>
+
+    <!-- Mobile Specific Metas
+    –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <!-- FONT
+    –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+    <link href='http://fonts.googleapis.com/css?family=Raleway:400,300,600' rel='stylesheet' type='text/css'>
+
+    <!-- CSS
+    –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+    <link rel="stylesheet" href="/static/skeleton/css/normalize.css">
+    <link rel="stylesheet" href="/static/skeleton/css/skeleton.css">
+
+    <link rel="stylesheet" type="text/css" href="/static/css/main.css">
+
+
 </head>
 
-
 <body>
-    <div id="logo">
-        <a href="./">
-        <pre>
+    <div id="container" class="container">
+        <div class="row tight">
+            <div class="twelve columns">
+                <div id="logo">
+                    <a href="./">
+                    <pre>
 ██╗     ██╗███╗   ██╗██╗  ██╗██████╗  █████╗ ██████╗      ██████╗ 
 ██║     ██║████╗  ██║██║ ██╔╝██╔══██╗██╔══██╗██╔══██╗     ╚════██╗
 ██║     ██║██╔██╗ ██║█████╔╝ ██████╔╝███████║██║  ██║█████╗█████╔╝
 ██║     ██║██║╚██╗██║██╔═██╗ ██╔═══╝ ██╔══██║██║  ██║╚════╝╚═══██╗
 ███████╗██║██║ ╚████║██║  ██╗██║     ██║  ██║██████╔╝     ██████╔╝
 ╚══════╝╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝╚═╝     ╚═╝  ╚═╝╚═════╝      ╚═════╝ 
-        </pre>      
-        </a>
-    </div>  
+                    </pre>      
+                    </a>
+                </div>  
+            </div>
+        </div>
 
-    <div>
-        <p>You have selected, <em>"{{doc.linkTitle}}"</em>, <em>{{doc.id}}</em></p>
-    </div>
+        <div class="row tight">
+            <div class="twelve columns">
 
-    <div id="edit">
-        <form action="/edit" method="POST">
-            <label><strong>link title:</strong></label>
-            <input size="120" type="text" name="linkTitle" value="{{doc.linkTitle}}"><br>
-            <label><strong>link URL:</strong></label>
-            <input size="120" type="text" name="linkURL" value="{{doc.linkURL}}"><br>
-            <input type="hidden" name="id" value="{{doc.id}}">
-            <button type="submit">submit</button>
-        </form>
-    </div>      
+                <div>
+                    <p>You have selected, <em>"{{doc.linkTitle}}"</em>, <em>{{doc.id}}</em></p>
+                </div>
 
-    <div id="delete">
-        <a href="/delete?id={{doc.id}}">delete!?</a>
+                <div id="edit">
+                    <form action="/edit" method="POST">
+                        <label><strong>Link Title:</strong></label>
+                        <input class="u-full-width" type="text" name="linkTitle" value="{{doc.linkTitle}}"><br>
+                        <label><strong>Link URL:</strong></label>
+                        <input class="u-full-width" type="text" name="linkURL" value="{{doc.linkURL}}"><br>
+                        <input type="hidden" name="id" value="{{doc.id}}">
+                        <button type="submit">submit</button>
+                    </form>
+                </div>      
+
+                <div id="delete">
+                    <a class="button" href="/delete?id={{doc.id}}">delete!?</a>
+                </div>
+
+            </div>
+        </div>
+
     </div>
 
 </body>

@@ -1,26 +1,55 @@
 <html>
 <head>
-	<title>linkPad3 - edit</title>
-	<link rel="stylesheet" type="text/css" href="/static/css/main.css">
+    <title>linkPad3 - add</title>
+
+    <!-- Mobile Specific Metas
+    –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <!-- FONT
+    –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+    <link href='http://fonts.googleapis.com/css?family=Raleway:400,300,600' rel='stylesheet' type='text/css'>
+
+    <!-- CSS
+    –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+    <link rel="stylesheet" href="/static/skeleton/css/normalize.css">
+    <link rel="stylesheet" href="/static/skeleton/css/skeleton.css">
+
+    <link rel="stylesheet" type="text/css" href="/static/css/main.css">
+
+
 </head>
 
 
 <body>
-    <div id="logo">
-        <a href="./">
-        <pre>
+    <div id="container" class="container">
+        <div class="row tight">
+            <div class="twelve columns">
+
+                <div id="logo">
+                    <a href="./">
+                    <pre>
 ██╗     ██╗███╗   ██╗██╗  ██╗██████╗  █████╗ ██████╗      ██████╗ 
 ██║     ██║████╗  ██║██║ ██╔╝██╔══██╗██╔══██╗██╔══██╗     ╚════██╗
 ██║     ██║██╔██╗ ██║█████╔╝ ██████╔╝███████║██║  ██║█████╗█████╔╝
 ██║     ██║██║╚██╗██║██╔═██╗ ██╔═══╝ ██╔══██║██║  ██║╚════╝╚═══██╗
 ███████╗██║██║ ╚████║██║  ██╗██║     ██║  ██║██████╔╝     ██████╔╝
 ╚══════╝╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝╚═╝     ╚═╝  ╚═╝╚═════╝      ╚═════╝ 
-        </pre>      
-        </a>
-    </div>  
+                    </pre>      
+                    </a>
+                </div>  
+            </div>
+        </div> 
 
-    <div id="edit">    
-        <p>You have added, <em>"{{add_url}}"</em>, id: <em>{{doc_id}}</em> - <a href="/edit?id={{doc_id}}">click to edit</a>.</p>
-    </div>      
+        <div class="row tight">
+            <div class="twelve columns">
+
+                <div id="edit">    
+                    <p>You have added, <em>"{{add_url}}"</em>, id: <em>{{doc_id}}</em></p>
+                    <p><a class="button" href="/edit?id={{doc_id}}">click to edit</a></p>
+                </div>   
+
+            </div>
+        </div>   
 
 </body>

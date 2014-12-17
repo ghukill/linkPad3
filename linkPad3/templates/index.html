@@ -36,7 +36,7 @@
 ╚══════╝╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝╚═╝     ╚═╝  ╚═╝╚═════╝      ╚═════╝ 
 					</pre>		
 					</a>
-					<p id="numbers" >{{search_handle.results.total_results}} current query / {{search_handle.total_record_count}} total</p>
+					<p style="margin-bottom:10px;" id="numbers" >{{search_handle.results.total_results}} current query / {{search_handle.total_record_count}} total</p>
 				</div>
 			</div>
 		</div>
@@ -81,7 +81,7 @@
 				<div id="pagination">
 					<ul>
 						{% if pagination.has_prev %}
-							<li><a href="/?q={{search_handle.q}}&page={{pagination.page - 1}}">previous</a></li>
+							<li><a class="button" href="/?q={{search_handle.q}}&page={{pagination.page - 1}}">previous</a></li>
 						{% else %}
 							<li><span style="color:gray;">nada</span></li>
 						{% endif %}
@@ -89,7 +89,7 @@
 						<li>{{pagination.page}} / {{pagination.pages}}</li>				
 						<li>--</li>
 						{% if pagination.has_next %}
-							<li><a href="/?q={{search_handle.q}}&page={{pagination.page + 1}}">next</a></li>
+							<li><a class="button" href="/?q={{search_handle.q}}&page={{pagination.page + 1}}">next</a></li>
 						{% else %}
 							<li><span style="color:gray;">nada</span></li>
 						{% endif %}

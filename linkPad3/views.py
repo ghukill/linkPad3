@@ -45,7 +45,7 @@ def index():
 	search_handle = models.Search()	
 
 	# detect if search
-	if request.args.get('q') != "" and request.args.get('q') != None:
+	if request.args.get('q') != "" and request.args.get('q') != "*:*" and request.args.get('q') != None:
 		search_handle.q = request.args.get('q')
 		search_handle.sort = ""
 	else:
