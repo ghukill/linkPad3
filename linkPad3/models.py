@@ -1,8 +1,12 @@
 from math import ceil
 import requests
+import dateutil.parser
 
 # Solr
 from solrHandles import solr_handle
+
+# Redis
+from redisHandles import r_thumbs
 
 # linkPad3 modules
 import localConfig
@@ -54,19 +58,24 @@ class Link(object):
 			"last_modified":"NOW",
 			"int_fullText":False
 		}
+		self.thumb_binary = ''
 		
 
 	def getLink(self,doc_id):
-		self.id = doc_id
+		try:
+			self.id = doc_id
 
-		solr_params = {
-			"q":"id:{doc_id}".format(doc_id=doc_id),
-			"start":0,
-			"rows":1
-		}
-		search_results = solr_handle.search(**solr_params)
-		doc = search_results.documents[0]
-		self.doc = doc
+			solr_params = {
+				"q":"id:{doc_id}".format(doc_id=doc_id),
+				"start":0,
+				"rows":1
+			}
+			search_results = solr_handle.search(**solr_params)
+			doc = search_results.documents[0]
+			self.doc = doc
+			self.date_parsed = dateutil.parser.parse(self.doc['last_modified'])
+		except:
+			return False
 
 	def update(self):
 		update_respone = solr_handle.update([self.doc], commit=True)		
@@ -77,11 +86,30 @@ class Link(object):
 		return delete_response
 
 	def indexHTML(self):
-		page_html = requests.get("http://localhost:8050/render.html?url={add_url}&wait=1".format(add_url=self.doc['linkURL'])).content
-		self.doc['int_fullText'] = page_html
+		try:
+			page_html = requests.get("http://162.243.93.130:8050/render.html?url={add_url}&wait=1".format(add_url=self.doc['linkURL'])).content
+			self.doc['int_fullText'] = page_html
+			return True
+		except:
+			print "Could not generate full-text HTML of page."
+			return False
 
 	def getThumb(self):
-		pass
+		try:
+			page_png_binary = requests.get("http://162.243.93.130:8050/render.png?url={add_url}&wait=1&width=320&height=240".format(add_url=self.doc['linkURL'])).content
+			self.thumb_binary = page_png_binary
+			r_thumbs.set(self.id,self.thumb_binary)
+			return True
+		except:
+			print "Could not generate page thumbnail."
+			return False
+
+	def retrieveThumb(self):
+		if r_thumbs.exists(self.id):
+			return r_thumbs.get(self.id)
+		else:
+			# return empty page thumbnail
+			return r_thumbs.get('no_thumb')
 
 
 # Search Class

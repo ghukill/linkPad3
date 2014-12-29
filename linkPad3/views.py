@@ -8,6 +8,8 @@ from cl.cl import celery
 # Solr
 from solrHandles import solr_handle
 
+from redisHandles import r_thumbs
+
 # localConfig
 import localConfig
 
@@ -28,13 +30,15 @@ import urllib2
 import datetime
 import md5
 import requests
+import StringIO
 
 # flask proper
 from flask import render_template, request, session, redirect, make_response, Response, Blueprint
 
+
 # session data secret key
 ####################################
-app.secret_key = 'linkPad3'
+app.secret_key = 'linkPad3' ########
 ####################################
 
 
@@ -100,8 +104,10 @@ def linkAdd(add_url):
 		soup = BeautifulSoup(urllib2.urlopen(add_url))
 		page_title = soup.title.string
 
-		# index in Solr
+		# instantiate mostly empty Link object
 		link = models.Link()
+
+		# index in Solr		
 		link.doc = {		
 			"id": md5.new(add_url).hexdigest(),
 			"linkTitle":page_title,
@@ -110,15 +116,20 @@ def linkAdd(add_url):
 			"int_fullText":False
 		}
 		update_response = link.update()
+		print update_response.raw_content	
 
 		# grab full-text HTML to index in int_fullText	
 		try:
 			link.indexHTML()
 			link.update()
 		except:
-			print "Could not render page, skipping full HTML"		
-		
-		print update_response.raw_content	
+			print "Could not render page, skipping full HTML"
+
+		# generate thumbnail
+		try:
+			link.getThumb()
+		except:
+			print "Could not render page thumbnail"		
 		
 	except:
 		"Could not index link."
@@ -165,6 +176,34 @@ def delete():
 	delete_response = link.delete()
 	print "link deleted."
 	return redirect('./')
+
+
+@app.route("/linkThumb", methods=['GET', 'POST'])
+def linkThumb():
+	
+	'''
+	Return link thumbnail
+	'''
+	try:
+		doc_id = request.args.get('id')
+		# print "Looking for",doc_id
+		link = models.Link()
+		link.getLink(doc_id)
+
+		# return image binary
+		response = make_response(link.retrieveThumb())
+		response.headers['Content-Type'] = 'image/png'
+		# response.headers['Content-Disposition'] = 'attachment; filename=link_thumbnail.png'
+		return response
+
+	except:
+		# return image binary
+		response = make_response(r_thumbs.get('no_thumb'))
+		response.headers['Content-Type'] = 'image/png'
+		# response.headers['Content-Disposition'] = 'attachment; filename=link_thumbnail.png'
+		return response
+
+
 
 
 

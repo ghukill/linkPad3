@@ -66,7 +66,9 @@
 					{% if search_handle.results %}
 						<ul>
 							{% for doc in search_handle.results.documents %}
-								<li><img src="http://www.google.com/s2/favicons?domain={{doc.linkURL}}"/> {{doc.linkTitle}}
+								<!-- <li><img src="http://www.google.com/s2/favicons?domain={{doc.linkURL}}"/> {{doc.linkTitle}} -->
+								<li><img class="link_thumb" src="http://162.243.93.130:4444/linkThumb?id={{doc.id}}"/> {{doc.linkTitle}}
+									<span class="last_modified">({{doc.last_modified}})</span>
 									<a class="editLink" href="/edit?id={{doc.id}}">(edit)</a>
 									<br>
 									<a href="{{doc.linkURL}}">{{doc.linkURL}}</a>
