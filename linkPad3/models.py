@@ -89,6 +89,7 @@ class Link(object):
 		try:
 			page_html = requests.get("http://162.243.93.130:8050/render.html?url={add_url}&wait=1".format(add_url=self.doc['linkURL'])).content
 			self.doc['int_fullText'] = page_html
+			print "HTML indexed."
 			return True
 		except:
 			print "Could not generate full-text HTML of page."
@@ -99,6 +100,7 @@ class Link(object):
 			page_png_binary = requests.get("http://162.243.93.130:8050/render.png?url={add_url}&wait=1&width=320&height=240".format(add_url=self.doc['linkURL'])).content
 			self.thumb_binary = page_png_binary
 			r_thumbs.set(self.id,self.thumb_binary)
+			print "Thumbnail binary retrieved."
 			return True
 		except:
 			print "Could not generate page thumbnail."
