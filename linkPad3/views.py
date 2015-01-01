@@ -51,6 +51,7 @@ def index():
 	# detect if search
 	if request.args.get('q') != "" and request.args.get('q') != "*:*" and request.args.get('q') != None:
 		search_handle.q = request.args.get('q')
+		# search_handle.q.op = "AND" # how to do this without do notation?
 		search_handle.sort = ""
 	else:
 		search_handle.q = "*:*"
@@ -77,6 +78,46 @@ def index():
 	else:
 		pagination = models.Pagination(page=search_handle.page, rows=localConfig.rows, total_results=search_handle.results.total_results)
 		return render_template("index.html",pagination=pagination,search_handle=search_handle)
+
+
+@app.route("/tiles", methods=['GET', 'POST'])
+def tiles():
+
+	# instantiate Search object
+	search_handle = models.Search()	
+
+	# bump tile num to 50
+	search_handle.rows = 50
+
+	# detect if search
+	if request.args.get('q') != "" and request.args.get('q') != "*:*" and request.args.get('q') != None:
+		search_handle.q = request.args.get('q')
+		search_handle.sort = ""
+	else:
+		search_handle.q = "*:*"
+		search_handle.sort = "last_modified desc"
+
+	# choose sort type
+	if request.args.get('sort') != "" and request.args.get('sort') != None:
+		search_handle.sort = request.args.get('sort')	
+
+	# get current page
+	if request.args.get('page') != "" and request.args.get('page') != None:
+		search_handle.page = int(request.args.get('page'))
+	else:
+		search_handle.page = 1
+
+	# perform search
+	search_handle.results = search_handle.search()
+
+	# failed search
+	if search_handle.results.total_results == 0:
+		return render_template("tiles.html",search_handle=search_handle,message="Sorry pardner, none found.")		
+
+	# successful search
+	else:
+		pagination = models.Pagination(page=search_handle.page, rows=localConfig.rows, total_results=search_handle.results.total_results)
+		return render_template("tiles.html",pagination=pagination,search_handle=search_handle)
 
 
 @app.route("/add", methods=['GET', 'POST'])

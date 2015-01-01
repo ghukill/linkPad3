@@ -19,6 +19,7 @@
 
 	<!-- JS -->
 	<script type="text/javascript" src="/static/js/jquery-1.11.2.min.js"></script>
+	<script type="text/javascript" src="/static/js/freewall.js"></script>
 
 
 </head>
@@ -48,7 +49,7 @@
 			<div class="twelve columns">
 				
 				<div id="search_form" class="twelve columns">
-					<form action="./" method="GET">
+					<form action="./tiles" method="GET">
 						<div class="five columns">
 							<input class="u-pull-left u-full-width" type="text" name="q" placeholder="search the treasures" value="{% if search_handle.q != '*:*'%}{{search_handle.q}}{% endif %}"></input>
 						</div>						
@@ -63,35 +64,35 @@
 
 		<div class="row tight">
 			<div class="twelve columns">
-			{% if search_handle.results.total_results > 0 %}
 
+			{% if search_handle.results.total_results > 0 %}
+				
+				{% if search_handle.results %}
 				<div id="links">
-					{% if search_handle.results %}
-							{% for doc in search_handle.results.documents %}
-							<div class="row link_row">
-								<div class="two columns">
-									<a href="{{doc.linkURL}}">
-										<img class="link_thumb u-max-full-width" src="http://162.243.93.130:4444/linkThumb?id={{doc.id}}"/>
-									</a>
-								</div>
-								<div class="ten columns">
-									<span>{{doc.linkTitle}}</span>
-									<span class="last_modified">({{doc.last_modified}})</span>
-									<a class="editLink" href="/edit?id={{doc.id}}">(edit)</a>
-									<br>
-									<a href="{{doc.linkURL}}">{{doc.linkURL}}</a>
-								</div>
-							</div>
-							{% endfor %}
-					{% else %}
-						<p>{{message}}</p>
-					{% endif %}
+					{% for doc in search_handle.results.documents %}
+						<div class="item">
+							<a href="{{doc.linkURL}}">
+								<img class="tile_thumb u-max-full-width" src="http://162.243.93.130:4444/linkThumb?id={{doc.id}}"/>
+							</a>
+						</div>
+					{% endfor %}
+					<!-- freewall -->
+					<script>
+						$(function() {
+							var wall = new freewall("#links");
+							wall.fitWidth();
+						});
+					</script>					
 				</div>
+				
+				{% else %}
+					<p>{{message}}</p>
+				{% endif %}
 
 				<div id="pagination">
 					<ul>
 						{% if pagination.has_prev %}
-							<li><a class="button" href="/?q={{search_handle.q}}&page={{pagination.page - 1}}">previous</a></li>
+							<li><a class="button" href="/tiles?q={{search_handle.q}}&page={{pagination.page - 1}}">previous</a></li>
 						{% else %}
 							<li><span style="color:gray;">nada</span></li>
 						{% endif %}
@@ -99,7 +100,7 @@
 						<li>{{pagination.page}} / {{pagination.pages}}</li>				
 						<li>--</li>
 						{% if pagination.has_next %}
-							<li><a class="button" href="/?q={{search_handle.q}}&page={{pagination.page + 1}}">next</a></li>
+							<li><a class="button" href="/tiles?q={{search_handle.q}}&page={{pagination.page + 1}}">next</a></li>
 						{% else %}
 							<li><span style="color:gray;">nada</span></li>
 						{% endif %}

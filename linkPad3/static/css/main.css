@@ -30,7 +30,11 @@ body {
 }
 
 .link_thumb {
-	height:75px;
+	border: 1px solid rgb(232, 232, 232);
+}
+
+.link_row {
+	margin-bottom:15px;
 }
 
 #logo a {
@@ -60,3 +64,25 @@ body {
 .u-pull-left {
   float: left; 
 }
+
+.u-max-full-width {
+  max-width: 100%;
+  box-sizing: border-box; }
+
+
+@media (max-width: 400px) {
+	.link_thumb {
+		margin-bottom:10px;
+	}
+}
+
+
+/* TESTING */
+#links {
+      /*width: 80%;*/
+      margin: auto;
+    }
+    .item {
+      width: 320px;
+      height: 320px;
+    }
