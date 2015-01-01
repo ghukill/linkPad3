@@ -107,9 +107,12 @@ def linkAdd(add_url):
 		# instantiate mostly empty Link object
 		link = models.Link()
 
+		# set id
+		link.id = md5.new(add_url).hexdigest()
+
 		# index in Solr		
 		link.doc = {		
-			"id": md5.new(add_url).hexdigest(),
+			"id": link.id,
 			"linkTitle":page_title,
 			"linkURL":add_url,
 			"last_modified":"NOW",
