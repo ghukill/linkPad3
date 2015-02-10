@@ -28,7 +28,7 @@ if __name__ == '__main__':
 
 	# linkPad3
 	print "Starting linkPad3..."
-	reactor.listenTCP( localConfig.app_port, site)
+	reactor.listenTCP( localConfig.app_port, site, interface="::")
 
 	print '''               
 ██╗     ██╗███╗   ██╗██╗  ██╗██████╗  █████╗ ██████╗      ██████╗ 

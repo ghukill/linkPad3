@@ -8,7 +8,7 @@ from cl.cl import celery
 # Solr
 from solrHandles import solr_handle
 
-from redisHandles import r_thumbs
+# from redisHandles import r_thumbs
 
 # localConfig
 import localConfig
@@ -67,17 +67,21 @@ def index():
 	else:
 		search_handle.page = 1
 
+	# catpure IP
+	ip = request.remote_addr
+	print ip
+
 	# perform search
 	search_handle.results = search_handle.search()
 
 	# failed search
 	if search_handle.results.total_results == 0:
-		return render_template("index.html",search_handle=search_handle,message="Sorry pardner, none found.")		
+		return render_template("index.html",search_handle=search_handle,message="Sorry pardner, none found.", ip=ip)		
 
 	# successful search
 	else:
 		pagination = models.Pagination(page=search_handle.page, rows=localConfig.rows, total_results=search_handle.results.total_results)
-		return render_template("index.html",pagination=pagination,search_handle=search_handle)
+		return render_template("index.html",pagination=pagination,search_handle=search_handle, ip=ip)
 
 
 @app.route("/tiles", methods=['GET', 'POST'])
@@ -129,7 +133,13 @@ def add():
 	else:
 		return redirect("./")
 
-	linkAdd.delay(add_url)
+	# celery task	
+	# linkAdd.delay(add_url)
+
+	# normy task
+	result = linkAdd(add_url)
+	if result == False:
+		return "Could not index link."
 
 	# future solr id
 	doc_id = md5.new(add_url).hexdigest()
@@ -137,13 +147,18 @@ def add():
 	return render_template("add.html",add_url=add_url,doc_id=doc_id)
 
 
-@celery.task(name="linkAdd")
+# @celery.task(name="linkAdd")
 def linkAdd(add_url):
 	
 	try:
-		# get page title
-		soup = BeautifulSoup(urllib2.urlopen(add_url))
-		page_title = soup.title.string
+
+		try:
+			# get page title
+			soup = BeautifulSoup(urllib2.urlopen(add_url))
+			page_title = soup.title.string
+		except:
+			print 'Could not grab title, defaulting to URL'
+			page_title = add_url
 
 		# instantiate mostly empty Link object
 		link = models.Link()
@@ -163,20 +178,21 @@ def linkAdd(add_url):
 		print update_response.raw_content	
 
 		# grab full-text HTML to index in int_fullText	
-		try:
-			link.indexHTML()
-			link.update()
-		except:
-			print "Could not render page, skipping full HTML"
+		# try:
+		# 	link.indexHTML()
+		# 	link.update()
+		# except:
+		# 	print "Could not render page, skipping full HTML"
 
-		# generate thumbnail
-		try:
-			link.getThumb()
-		except:
-			print "Could not render page thumbnail"		
+		# # generate thumbnail
+		# try:
+		# 	link.getThumb()
+		# except:
+		# 	print "Could not render page thumbnail"		
 		
 	except:
-		"Could not index link."
+		print "Could not index link."
+		return False
 
 
 

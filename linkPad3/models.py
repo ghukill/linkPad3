@@ -6,7 +6,7 @@ import dateutil.parser
 from solrHandles import solr_handle
 
 # Redis
-from redisHandles import r_thumbs
+# from redisHandles import r_thumbs, r_HTML
 
 # linkPad3 modules
 import localConfig
@@ -82,13 +82,29 @@ class Link(object):
 		return update_respone
 
 	def delete(self):
-		delete_response = solr_handle.delete_by_key(self.id, commit=True)
-		return delete_response
+		# delete from solr
+		solr_delete = solr_handle.delete_by_key(self.id, commit=True)
+		
+		# delete thumb from Redis
+		redis_delete = r_thumbs.delete(self.id)
+
+		if solr_delete.status == 200 and redis_delete == 1:
+			return True
+
+		else:
+			print "Solr Delete:",solr_delete.status
+			print "Redis Delete:",redis_delete
+			return False
+
 
 	def indexHTML(self):
 		try:
 			page_html = requests.get("http://localhost:8050/render.html?url={add_url}&wait=1".format(add_url=self.doc['linkURL'])).content
 			self.doc['int_fullText'] = page_html
+			
+			# # index HTML in Redis
+			# r_HTML.set(self.id,page_html)
+			
 			print "HTML indexed."
 			return True
 		except:
@@ -112,6 +128,7 @@ class Link(object):
 		else:
 			# return empty page thumbnail
 			return r_thumbs.get('no_thumb')
+
 
 
 # Search Class

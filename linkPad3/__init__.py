@@ -4,7 +4,7 @@
 from flask import Flask, render_template, g
 
 from solrHandles import solr_handle
-import redisHandles
+# import redisHandles
 
 # create app
 app = Flask(__name__)
