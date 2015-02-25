@@ -4,7 +4,7 @@ import time
 
 
 def makeAllThumbs():
-	all = linkPad3.solr_handle.search(q="*:*",rows=2000,start=0,sort="last_modified desc")
+	all = linkPad3.solr_handle.search(q="*:*",rows=10000,start=0,sort="last_modified desc")
 	count = 1
 
 	for each in all.documents:
@@ -25,7 +25,7 @@ def makeAllThumbs():
 
 
 def indexAllHTML():
-	all = linkPad3.solr_handle.search(q="*:*",rows=10000)
+	all = linkPad3.solr_handle.search(q="*:*",sort="last_modified desc",rows=10000)
 	count = 1
 
 	for each in all.documents:
@@ -34,8 +34,10 @@ def indexAllHTML():
 			link_handle = linkPad3.models.Link()
 			link_handle.getLink(each['id'])
 			print link_handle.doc['linkTitle']
-			link_handle.indexHTML()
-			link_handle.update()
+			index_result = link_handle.indexHTML()
+			link_handle.update()			
+			if index_result == False:
+				raw_input("Hit enter to continue...")
 		except:
 			print "errors were had, skipping."
 		count += 1

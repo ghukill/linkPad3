@@ -99,8 +99,9 @@ class Link(object):
 
 	def indexHTML(self):
 		try:
-			page_html = requests.get("http://localhost:8050/render.html?url={add_url}&wait=1".format(add_url=self.doc['linkURL'])).content
+			page_html = requests.get("http://68.42.117.7:8050/render.html?url={add_url}&wait=1".format(add_url=self.doc['linkURL'])).content
 			self.doc['int_fullText'] = page_html
+			self.doc['HTMLstring'] = page_html
 			
 			# # index HTML in Redis
 			# r_HTML.set(self.id,page_html)

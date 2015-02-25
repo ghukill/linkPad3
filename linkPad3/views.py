@@ -131,7 +131,7 @@ def add():
 	if request.args.get('url') != "" and request.args.get('url') != None:
 		add_url = request.args.get('url')
 	else:
-		return redirect("./")
+		return redirect("/linkPad3/")
 
 	# celery task	
 	# linkAdd.delay(add_url)
@@ -178,11 +178,11 @@ def linkAdd(add_url):
 		print update_response.raw_content	
 
 		# grab full-text HTML to index in int_fullText	
-		# try:
-		# 	link.indexHTML()
-		# 	link.update()
-		# except:
-		# 	print "Could not render page, skipping full HTML"
+		try:
+			link.indexHTML()
+			link.update()
+		except:
+			print "Could not render page, skipping full HTML"
 
 		# # generate thumbnail
 		# try:
@@ -220,7 +220,7 @@ def edit():
 		link.doc['linkURL'] = request.form['linkURL']
 		update_response = link.update()		
 
-		return redirect('./')
+		return redirect('/linkPad3/')
 
 
 
@@ -235,7 +235,7 @@ def delete():
 	link.getLink(doc_id)
 	delete_response = link.delete()
 	print "link deleted."
-	return redirect('./')
+	return redirect('/linkPad3/')
 
 
 @app.route("/linkThumb", methods=['GET', 'POST'])
