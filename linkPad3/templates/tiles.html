@@ -19,7 +19,7 @@
 
 	<!-- JS -->
 	<script type="text/javascript" src="static/js/jquery-1.11.2.min.js"></script>
-	<script type="text/javascript" src="/static/js/freewall.js"></script>
+	<script type="text/javascript" src="static/js/freewall.js"></script>
 
 
 </head>
@@ -72,7 +72,7 @@
 					{% for doc in search_handle.results.documents %}
 						<div class="item">
 							<a href="{{doc.linkURL}}">
-								<img class="tile_thumb u-max-full-width" src="http://162.243.93.130:4444/linkThumb?id={{doc.id}}"/>
+								<img class="tile_thumb u-max-full-width" src="static/imageStore/{{doc.id}}.png"/>
 							</a>
 						</div>
 					{% endfor %}
@@ -92,7 +92,7 @@
 				<div id="pagination">
 					<ul>
 						{% if pagination.has_prev %}
-							<li><a class="button" href="/tiles?q={{search_handle.q}}&page={{pagination.page - 1}}">previous</a></li>
+							<li><a class="button" href="tiles?q={{search_handle.q}}&page={{pagination.page - 1}}">previous</a></li>
 						{% else %}
 							<li><span style="color:gray;">nada</span></li>
 						{% endif %}
@@ -100,7 +100,7 @@
 						<li>{{pagination.page}} / {{pagination.pages}}</li>				
 						<li>--</li>
 						{% if pagination.has_next %}
-							<li><a class="button" href="/tiles?q={{search_handle.q}}&page={{pagination.page + 1}}">next</a></li>
+							<li><a class="button" href="tiles?q={{search_handle.q}}&page={{pagination.page + 1}}">next</a></li>
 						{% else %}
 							<li><span style="color:gray;">nada</span></li>
 						{% endif %}

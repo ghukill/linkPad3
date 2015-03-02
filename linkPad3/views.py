@@ -124,6 +124,18 @@ def tiles():
 		return render_template("tiles.html",pagination=pagination,search_handle=search_handle)
 
 
+# return archived HTML for link
+@app.route("/archive/<id>", methods=['GET', 'POST'])
+def archive(id):
+
+	# open link handle
+	link = models.Link()
+	link.getLink(id)
+
+	# return HTML
+	return link.doc['HTMLstring']
+
+
 @app.route("/add", methods=['GET', 'POST'])
 def add():
 
@@ -184,11 +196,11 @@ def linkAdd(add_url):
 		except:
 			print "Could not render page, skipping full HTML"
 
-		# # generate thumbnail
-		# try:
-		# 	link.getThumb()
-		# except:
-		# 	print "Could not render page thumbnail"		
+		# generate thumbnail
+		try:
+			link.getThumb()
+		except:
+			print "Could not render page thumbnail"		
 		
 	except:
 		print "Could not index link."

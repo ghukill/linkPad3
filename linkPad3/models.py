@@ -61,7 +61,7 @@ class Link(object):
 		self.thumb_binary = ''
 		
 
-	def getLink(self,doc_id):
+	def getLink(self, doc_id):
 		try:
 			self.id = doc_id
 
@@ -80,6 +80,7 @@ class Link(object):
 	def update(self):
 		update_respone = solr_handle.update([self.doc], commit=True)		
 		return update_respone
+
 
 	def delete(self):
 		# delete from solr
@@ -113,15 +114,32 @@ class Link(object):
 			return False
 
 	def getThumb(self):
-		try:
-			page_png_binary = requests.get("http://localhost:8050/render.png?url={add_url}&wait=1&width=320&height=240".format(add_url=self.doc['linkURL'])).content
-			self.thumb_binary = page_png_binary
-			r_thumbs.set(self.id,self.thumb_binary)
-			print "Thumbnail binary retrieved."
-			return True
-		except:
-			print "Could not generate page thumbnail."
-			return False
+		# DB based approach
+		# try:
+		# 	page_png_binary = requests.get("http://localhost:8050/render.png?url={add_url}&wait=1&width=320&height=240".format(add_url=self.doc['linkURL'])).content
+		# 	self.thumb_binary = page_png_binary
+		# 	r_thumbs.set(self.id,self.thumb_binary)
+		# 	print "Thumbnail binary retrieved."
+		# 	return True
+		# except:
+		# 	print "Could not generate page thumbnail."
+		# 	return False
+
+		# disk-based approach
+		# try:
+		page_png_binary = requests.get("http://68.42.117.7:8050/render.png?url={add_url}&wait=1&width=320&height=240".format(add_url=self.doc['linkURL'])).content
+
+		# write to file
+		filename = "linkPad3/static/imageStore/"+self.id+".png"
+		fhand = open(filename,'wb')
+		fhand.write(page_png_binary)
+		fhand.close()
+		print "Thumbnail binary retrieved."
+		return True
+
+		# except:
+		# 	print "Could not generate page thumbnail."
+		# 	return False
 
 	def retrieveThumb(self):
 		if r_thumbs.exists(self.id):
@@ -135,12 +153,13 @@ class Link(object):
 # Search Class
 class Search(object):
 
-	def __init__(self,q="*:*", sort="last_modified desc", rows=localConfig.rows, page=1):
+	def __init__(self,q="*:*", sort="last_modified desc", rows=localConfig.rows, page=1, fl=""):
 
 		self.q = q
 		self.sort = sort
 		self.rows = rows
-		self.page = page		
+		self.page = page
+		self.fl = fl
 
 
 	@property
@@ -163,7 +182,8 @@ class Search(object):
 			"q":self.q,
 			"rows":self.rows,
 			"start":self.start,
-			"sort":self.sort
+			"sort":self.sort,
+			"fl":self.fl
 		}
 		return solr_handle.search(**solr_params)
 

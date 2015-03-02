@@ -69,11 +69,11 @@
 					{% if search_handle.results %}
 							{% for doc in search_handle.results.documents %}
 							<div class="row link_row">
-								<!-- <div class="two columns">
+								<div class="two columns">
 									<a href="{{doc.linkURL}}">
-										<img class="link_thumb u-max-full-width" src="http://162.243.93.130:4444/linkThumb?id={{doc.id}}"/>
+										<img class="link_thumb u-max-full-width" src="static/imageStore/{{doc.id}}.png"/>
 									</a>
-								</div> -->
+								</div>
 								<div class="ten columns">
 									<span>{{doc.linkTitle}}</span>
 									<span class="last_modified">({{doc.last_modified}})</span>
