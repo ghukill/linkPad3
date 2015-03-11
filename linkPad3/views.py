@@ -31,9 +31,10 @@ import datetime
 import md5
 import requests
 import StringIO
+import logging
 
 # flask proper
-from flask import render_template, request, session, redirect, make_response, Response, Blueprint
+from flask import render_template, request, session, redirect, make_response, Response, Blueprint, jsonify
 
 
 # session data secret key
@@ -69,19 +70,19 @@ def index():
 
 	# catpure IP
 	ip = request.remote_addr
-	print ip
+	logging.debug(ip)
 
 	# perform search
 	search_handle.results = search_handle.search()
 
 	# failed search
 	if search_handle.results.total_results == 0:
-		return render_template("index.html",search_handle=search_handle,message="Sorry pardner, none found.", ip=ip)		
+		return render_template("index.html",search_handle=search_handle,message="Sorry pardner, none found.", ip=ip, urlprefix=localConfig.urlprefix)		
 
 	# successful search
 	else:
 		pagination = models.Pagination(page=search_handle.page, rows=localConfig.rows, total_results=search_handle.results.total_results)
-		return render_template("index.html",pagination=pagination,search_handle=search_handle, ip=ip)
+		return render_template("index.html",pagination=pagination,search_handle=search_handle, ip=ip, urlprefix=localConfig.urlprefix)
 
 
 @app.route("/tiles", methods=['GET', 'POST'])
@@ -143,69 +144,44 @@ def add():
 	if request.args.get('url') != "" and request.args.get('url') != None:
 		add_url = request.args.get('url')
 	else:
-		return redirect("/linkPad3/")
+		return redirect("/{urlprefix}/".format(urlprefix=localConfig.urlprefix))
 
 	# celery task	
 	# linkAdd.delay(add_url)
 
-	# normy task
-	result = linkAdd(add_url)
-	if result == False:
-		return "Could not index link."
+	# # normy task
+	# link = models.Link()
+	# doc_id = link.linkAdd(add_url)
+	# if doc_id == False:
+	# 	return "Could not index link."
 
-	# future solr id
-	doc_id = md5.new(add_url).hexdigest()
-
-	return render_template("add.html",add_url=add_url,doc_id=doc_id)
-
-
-# @celery.task(name="linkAdd")
-def linkAdd(add_url):
+	# return render_template("add.html",add_url=add_url,doc_id=doc_id)
 	
-	try:
+	# push to /add_background as ajax
+	return render_template("add.html", add_url=add_url, urlprefix=localConfig.urlprefix)
 
-		try:
-			# get page title
-			soup = BeautifulSoup(urllib2.urlopen(add_url))
-			page_title = soup.title.string
-		except:
-			print 'Could not grab title, defaulting to URL'
-			page_title = add_url
 
-		# instantiate mostly empty Link object
-		link = models.Link()
 
-		# set id
-		link.id = md5.new(add_url).hexdigest()
+@app.route("/add_background", methods=['GET', 'POST'])
+def add_background():
 
-		# index in Solr		
-		link.doc = {		
-			"id": link.id,
-			"linkTitle":page_title,
-			"linkURL":add_url,
-			"last_modified":"NOW",
-			"int_fullText":False
-		}
-		update_response = link.update()
-		print update_response.raw_content	
+	# get query string
+	if request.args.get('url') != "" and request.args.get('url') != None:
+		add_url = request.args.get('url')
+	else:
+		return redirect("/{urlprefix}/".format(urlprefix=localConfig.urlprefix))
 
-		# grab full-text HTML to index in int_fullText	
-		try:
-			link.indexHTML()
-			link.update()
-		except:
-			print "Could not render page, skipping full HTML"
+	# normy task	
+	return_dict = {}
+	link = models.Link()
+	doc_id = link.linkAdd(add_url)
+	if doc_id == False:
+		return_dict['status'] = False
+	else:
+		return_dict['status'] = True
+		return_dict['id'] = doc_id
 
-		# generate thumbnail
-		try:
-			link.getThumb()
-		except:
-			print "Could not render page thumbnail"		
-		
-	except:
-		print "Could not index link."
-		return False
-
+	return jsonify(**return_dict)	
 
 
 @app.route("/edit", methods=['GET', 'POST'])
@@ -220,7 +196,7 @@ def edit():
 		link = models.Link()
 		link.getLink(doc_id)
 
-		return render_template("edit.html",doc=link.doc)
+		return render_template("edit.html",doc=link.doc,urlprefix=localConfig.urlprefix)
 
 	# commit changes
 	if request.method == "POST":
@@ -230,6 +206,7 @@ def edit():
 
 		link.doc['linkTitle'] = request.form['linkTitle']
 		link.doc['linkURL'] = request.form['linkURL']
+		link.doc['comments'] = request.form['comments']
 		update_response = link.update()		
 
 		return redirect('/linkPad3/')
@@ -241,39 +218,37 @@ def delete():
 	'''
 	Remove link from Solr
 	'''
-
 	doc_id = request.args.get('id')		
 	link = models.Link()
 	link.getLink(doc_id)
 	delete_response = link.delete()
-	print "link deleted."
-	return redirect('/linkPad3/')
+	return redirect('/{urlprefix}/'.format(urlprefix=localConfig.urlprefix))
 
 
-@app.route("/linkThumb", methods=['GET', 'POST'])
-def linkThumb():
+# @app.route("/linkThumb", methods=['GET', 'POST'])
+# def linkThumb():
 	
-	'''
-	Return link thumbnail
-	'''
-	try:
-		doc_id = request.args.get('id')
-		# print "Looking for",doc_id
-		link = models.Link()
-		link.getLink(doc_id)
+# 	'''
+# 	Return link thumbnail
+# 	'''
+# 	try:
+# 		doc_id = request.args.get('id')
+# 		# print "Looking for",doc_id
+# 		link = models.Link()
+# 		link.getLink(doc_id)
 
-		# return image binary
-		response = make_response(link.retrieveThumb())
-		response.headers['Content-Type'] = 'image/png'
-		# response.headers['Content-Disposition'] = 'attachment; filename=link_thumbnail.png'
-		return response
+# 		# return image binary
+# 		response = make_response(link.retrieveThumb())
+# 		response.headers['Content-Type'] = 'image/png'
+# 		# response.headers['Content-Disposition'] = 'attachment; filename=link_thumbnail.png'
+# 		return response
 
-	except:
-		# return image binary
-		response = make_response(r_thumbs.get('no_thumb'))
-		response.headers['Content-Type'] = 'image/png'
-		# response.headers['Content-Disposition'] = 'attachment; filename=link_thumbnail.png'
-		return response
+# 	except:
+# 		# return image binary
+# 		response = make_response(r_thumbs.get('no_thumb'))
+# 		response.headers['Content-Type'] = 'image/png'
+# 		# response.headers['Content-Disposition'] = 'attachment; filename=link_thumbnail.png'
+# 		return response
 
 
 

@@ -1,6 +1,13 @@
+import os
 from math import ceil
 import requests
 import dateutil.parser
+from bs4 import BeautifulSoup
+import urllib2
+import datetime
+import md5
+import time
+import logging
 
 # Solr
 from solrHandles import solr_handle
@@ -10,6 +17,7 @@ from solrHandles import solr_handle
 
 # linkPad3 modules
 import localConfig
+
 
 class Pagination(object):
 
@@ -59,12 +67,54 @@ class Link(object):
 			"int_fullText":False
 		}
 		self.thumb_binary = ''
+
+
+	def linkAdd(self, add_url):
+		
+		try:
+
+			try:
+				# get page title
+				soup = BeautifulSoup(urllib2.urlopen(add_url))
+				page_title = soup.title.string
+			except:
+				logging.info('Could not grab title, defaulting to URL')
+				page_title = add_url
+
+			# instantiate mostly empty Link object
+			# link = models.Link()
+
+			# set id
+			self.id = md5.new(add_url+str(int(time.time()))).hexdigest()
+
+			# index in Solr		
+			self.doc = {		
+				"id": self.id,
+				"linkTitle":page_title,
+				"linkURL":add_url,
+				"last_modified":"NOW",
+				"int_fullText":False
+			}
+			update_response = self.update()
+			logging.debug(update_response.raw_content)
+
+			# grab full-text HTML to index in int_fullText	
+			if self.indexHTML() == True:
+				self.update()
+
+			# generate thumbnail
+			self.getThumb()
+
+			return self.id	
+			
+		except:
+			logging.info("Could not index link.")
+			return False
 		
 
 	def getLink(self, doc_id):
 		try:
 			self.id = doc_id
-
 			solr_params = {
 				"q":"id:{doc_id}".format(doc_id=doc_id),
 				"start":0,
@@ -86,60 +136,62 @@ class Link(object):
 		# delete from solr
 		solr_delete = solr_handle.delete_by_key(self.id, commit=True)
 		
-		# delete thumb from Redis
-		redis_delete = r_thumbs.delete(self.id)
+		# delete thumb from filesystem
+		try:
+			filename = localConfig.imageSource+self.id+".png"
+			os.system('rm {filename}'.format(filename=filename))			
+			loggin.info("thumbnail removed.")
+		except:
+			logging.info("file not found or could not be removed")
 
-		if solr_delete.status == 200 and redis_delete == 1:
+		if solr_delete.status == 200:
+			logging.info("link deleted from Solr.")
 			return True
 
 		else:
-			print "Solr Delete:",solr_delete.status
-			print "Redis Delete:",redis_delete
+			logging.debug("Solr Delete: {msg}".format(msg=solr_delete.status))
 			return False
 
 
 	def indexHTML(self):
 		try:
-			page_html = requests.get("http://68.42.117.7:8050/render.html?url={add_url}&wait=1".format(add_url=self.doc['linkURL'])).content
+			page_html = requests.get("http://{splash_server}/render.html?url={add_url}&wait=1".format(splash_server=localConfig.splash_server, add_url=self.doc['linkURL'])).content
 			self.doc['int_fullText'] = page_html
 			self.doc['HTMLstring'] = page_html
 			
-			# # index HTML in Redis
-			# r_HTML.set(self.id,page_html)
-			
-			print "HTML indexed."
+			logging.info("HTML indexed.")
 			return True
 		except:
-			print "Could not generate full-text HTML of page."
+			logging.info("Could not generate full-text HTML of page.")
 			return False
 
 	def getThumb(self):
-		# DB based approach
-		# try:
-		# 	page_png_binary = requests.get("http://localhost:8050/render.png?url={add_url}&wait=1&width=320&height=240".format(add_url=self.doc['linkURL'])).content
-		# 	self.thumb_binary = page_png_binary
-		# 	r_thumbs.set(self.id,self.thumb_binary)
-		# 	print "Thumbnail binary retrieved."
-		# 	return True
-		# except:
-		# 	print "Could not generate page thumbnail."
-		# 	return False
+		
+		try:
+			page_png_binary = requests.get("http://{splash_server}/render.png?url={add_url}&wait=1&width=320&height=240".format(splash_server=localConfig.splash_server, add_url=self.doc['linkURL'])).content
+			logging.debug("Length of binary data {msg}".format(msg=str(len(page_png_binary))))
+			if len(page_png_binary) < 50:
+				raise Exception("Image binary suspiciously small, using default noImage.")
 
-		# disk-based approach
-		# try:
-		page_png_binary = requests.get("http://68.42.117.7:8050/render.png?url={add_url}&wait=1&width=320&height=240".format(add_url=self.doc['linkURL'])).content
-
-		# write to file
-		filename = "linkPad3/static/imageStore/"+self.id+".png"
-		fhand = open(filename,'wb')
-		fhand.write(page_png_binary)
-		fhand.close()
-		print "Thumbnail binary retrieved."
-		return True
-
-		# except:
-		# 	print "Could not generate page thumbnail."
-		# 	return False
+			# write to file
+			filename = localConfig.imageSource+self.id+".png"
+			fhand = open(filename,'wb')
+			fhand.write(page_png_binary)
+			fhand.close()
+			logging.info("Thumbnail binary retrieved.")
+			return True
+		
+		except Exception as e:
+			logging.debug(e)
+			# use default icon
+			no_image_binary = open("linkPad3/static/images/noImage.png",'rb').read()
+			filename = localConfig.imageSource+self.id+".png"
+			fhand = open(filename,'wb')
+			fhand.write(no_image_binary)
+			fhand.close()
+			logging.info("NoImage Thumbnail binary used.")
+			return False
+		
 
 	def retrieveThumb(self):
 		if r_thumbs.exists(self.id):

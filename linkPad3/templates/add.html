@@ -44,7 +44,8 @@
             </div>
         </div> 
 
-        <div class="row tight">
+        <!-- synchronous -->
+        <!-- <div class="row tight">
             <div class="twelve columns">
 
                 <div id="edit">    
@@ -53,6 +54,37 @@
                 </div>   
 
             </div>
-        </div>   
+        </div> -->   
+
+        <script type="text/javascript">
+            $.ajax({
+                url: "/{{urlprefix}}/add_background?url={{add_url}}",
+                dataType:"json"
+                }).done(function(response) {
+                    console.log(response);
+                    // $(".msg").html('<span class="success_color">Finis.</span>');
+                    $(".working_color").css('visibility','hidden');
+                    $(".success_color").css('visibility','visible');
+                    $(".on_success a").attr("href","edit?id="+response.id)
+                    $(".on_success").show();
+            });            
+        </script>
+
+
+        <!-- asynch -->
+        <div class="row tight">
+            <div class="twelve columns">
+
+                <div id="edit">    
+                    <p>You are adding <em>"{{add_url}}"</em></p>                    
+                </div>   
+
+                <div id="status">
+                    <p class="msg"><span class="working_color">Working...</span><span style="visibility:hidden;" class="success_color">...finis.</span></p>
+                    <p class="on_success"><a class="button" href="#">click to edit</a></p>
+                </div>
+
+            </div>
+        </div>
 
 </body>

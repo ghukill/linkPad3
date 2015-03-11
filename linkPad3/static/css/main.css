@@ -43,12 +43,24 @@ body {
 	font-size:.65rem;
 }
 
+.on_success{
+	display:none;
+}
+
 #pagination ul {
 	list-style-type: none;
 }
 
 #pagination ul li {
 	display:inline;
+}
+
+.success_color {
+	color:green;
+}
+
+#status .msg{
+	font-weight:bold;
 }
 
 .tight {
@@ -68,6 +80,10 @@ body {
 .u-max-full-width {
   max-width: 100%;
   box-sizing: border-box; }
+
+.working_color{
+	color:orange;
+}
 
 
 @media (max-width: 400px) {

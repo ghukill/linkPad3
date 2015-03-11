@@ -71,7 +71,7 @@
 							<div class="row link_row">
 								<div class="two columns">
 									<a href="{{doc.linkURL}}">
-										<img class="link_thumb u-max-full-width" src="static/imageStore/{{doc.id}}.png"/>
+										<img class="link_thumb u-max-full-width" src="/lp3assets/imageSource/{{doc.id}}.png"/>
 									</a>
 								</div>
 								<div class="ten columns">
@@ -80,6 +80,9 @@
 									<a class="editLink" href="edit?id={{doc.id}}">(edit)</a>
 									<br>
 									<a href="{{doc.linkURL}}">{{doc.linkURL}}</a>
+									<br>
+									<br>
+									<dd><em>{{doc.comments}}</em></dd>
 								</div>
 							</div>
 							{% endfor %}
@@ -91,7 +94,7 @@
 				<div id="pagination">
 					<ul>
 						{% if pagination.has_prev %}
-							<li><a class="button" href="/linkPad3/?q={{search_handle.q}}&page={{pagination.page - 1}}">previous</a></li>
+							<li><a class="button" href="/{{urlprefix}}/?q={{search_handle.q}}&page={{pagination.page - 1}}">previous</a></li>
 						{% else %}
 							<li><span style="color:gray;">nada</span></li>
 						{% endif %}
@@ -99,7 +102,7 @@
 						<li>{{pagination.page}} / {{pagination.pages}}</li>				
 						<li>--</li>
 						{% if pagination.has_next %}
-							<li><a class="button" href="/linkPad3/?q={{search_handle.q}}&page={{pagination.page + 1}}">next</a></li>
+							<li><a class="button" href="/{{urlprefix}}/?q={{search_handle.q}}&page={{pagination.page + 1}}">next</a></li>
 						{% else %}
 							<li><span style="color:gray;">nada</span></li>
 						{% endif %}
@@ -117,7 +120,7 @@
 		<div class="row tight">
 			<div class="twelve columns">
 				<div id="bookmarklet">
-					<p>bookmarklet: <a class="button" href='javascript:(function(){dest="http://162.243.93.130/linkPad3/add?url="+encodeURIComponent(location.href); window.open(dest,"_tab");})();'>linkPad3-Add</a></p>
+					<p>bookmarklet: <a class="button" href='javascript:(function(){dest="http://162.243.93.130/{urlprefix}/add?url="+encodeURIComponent(location.href); window.open(dest,"_tab");})();'>linkPad3-Add</a></p>
 				</div>
 			</div>
 		</div>

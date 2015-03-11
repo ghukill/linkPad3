@@ -55,13 +55,15 @@
                         <input class="u-full-width" type="text" name="linkTitle" value="{{doc.linkTitle}}"><br>
                         <label><strong>Link URL:</strong></label>
                         <input class="u-full-width" type="text" name="linkURL" value="{{doc.linkURL}}"><br>
+                        <label><strong>Comments:</strong></label>
+                        <textarea class="u-full-width" name="comments">{{doc.comments}}</textarea><br>                        
                         <input type="hidden" name="id" value="{{doc.id}}">
                         <button type="submit">submit</button>
                     </form>
                 </div>      
 
                 <div id="delete">
-                    <a class="button" href="/delete?id={{doc.id}}">delete!?</a>
+                    <a class="button" href="/{{urlprefix}}/delete?id={{doc.id}}">delete!?</a>
                 </div>
 
             </div>
