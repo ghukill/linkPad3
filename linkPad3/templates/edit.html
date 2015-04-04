@@ -61,18 +61,28 @@
                         <button type="submit">submit</button>
                     </form>
                 </div>
-
-                <div id="updateCrawl">
-                    <a id="updateCrawl_button" class="button" href="/{{urlprefix}}/updateCrawl?id={{doc.id}}" onclick="$('#updateCrawl_button').html('updating...');">update thumb & HTML</a>
-                </div>
-
-                <div id="delete">
-                    <a class="button" href="/{{urlprefix}}/delete?id={{doc.id}}">delete!?</a>
-                </div>
-
             </div>
         </div>
 
+        <div class="row right">
+
+            <div class="six columns">
+                <div id="updateCrawl">
+                    <a id="updateCrawl_button" class="button" href="/{{urlprefix}}/updateCrawl?id={{doc.id}}" onclick="$('#updateCrawl_button').html('updating...');">update thumb & HTML</a>
+                </div>
+                <div id="delete">
+                    <a class="button" href="/{{urlprefix}}/delete?id={{doc.id}}">delete!?</a>
+                </div>
+            </div>
+            <div class="six columns">
+                <img class="link_thumb u-max-full-width" src="/lp3assets/imageSource/{{doc.id}}.png"/>
+                <br>
+                <br>
+                <p style="text-align:center;"><a class="button" href="/{{urlprefix}}/archive/{{doc.id}}">View indexed HTML</a></p>
+            </div>
+
+        </div>
+        
     </div>
 
 </body>
