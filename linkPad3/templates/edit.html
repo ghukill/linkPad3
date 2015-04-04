@@ -60,7 +60,11 @@
                         <input type="hidden" name="id" value="{{doc.id}}">
                         <button type="submit">submit</button>
                     </form>
-                </div>      
+                </div>
+
+                <div id="updateCrawl">
+                    <a id="updateCrawl_button" class="button" href="/{{urlprefix}}/updateCrawl?id={{doc.id}}" onclick="$('#updateCrawl_button').html('updating...');">update thumb & HTML</a>
+                </div>
 
                 <div id="delete">
                     <a class="button" href="/{{urlprefix}}/delete?id={{doc.id}}">delete!?</a>

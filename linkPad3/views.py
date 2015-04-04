@@ -212,6 +212,22 @@ def edit():
 		return redirect('/linkPad3/')
 
 
+@app.route("/updateCrawl", methods=['GET', 'POST'])
+def updateCrawl():
+	'''
+	Re-gen thumbnail and HTML
+	'''
+	
+	doc_id = request.args.get('id')		
+	link = models.Link()
+	link.getLink(doc_id)
+
+	# re-gen thumbnail and HTML
+	link.getThumb()	
+	link.indexHTML()
+		
+	return redirect('/{urlprefix}/'.format(urlprefix=localConfig.urlprefix))
+
 
 @app.route("/delete", methods=['GET', 'POST'])
 def delete():
