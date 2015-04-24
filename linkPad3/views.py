@@ -225,6 +225,7 @@ def updateCrawl():
 	# re-gen thumbnail and HTML
 	link.getThumb()	
 	link.indexHTML()
+	link.update()
 		
 	return redirect('/{urlprefix}/'.format(urlprefix=localConfig.urlprefix))
 
